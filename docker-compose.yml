@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  strapi-db:
+    image: postgres:15-alpine
+    container_name: crypto-db
+    environment:
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: crypto_watcher
+    volumes:
+      - strapi-data:/var/lib/postgresql/data
+    networks:
+      - crypto-net
+
+  strapi-redis:
+    image: redis:7-alpine
+    container_name: crypto-redis
+    networks:
+      - crypto-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crypto-strapi
+    depends_on:
+      - strapi-db
+      - strapi-redis
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: strapi-db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: crypto_watcher
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: password
+      REDIS_HOST: strapi-redis
+    ports:
+      - "1337:1337"
+    networks:
+      - crypto-net
+
+networks:
+  crypto-net:
+    driver: bridge
+
+volumes:
+  strapi-data:
