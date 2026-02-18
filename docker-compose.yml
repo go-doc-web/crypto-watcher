@@ -19,11 +19,14 @@ services:
     networks:
       - crypto-net
 
-  backend:
+  strapi:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: crypto-strapi
+    volumes:
+      - ./backend:/opt/app
+      - /opt/app/node_modules
     depends_on:
       - strapi-db
       - strapi-redis
