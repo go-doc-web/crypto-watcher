@@ -1,5 +1,7 @@
 export default {
   "*/1 * * * *": async ({ strapi }) => {
+    const { default: redis } = await import("../src/extensions/redis");
+
     const btc = await strapi.db.query("api::coin.coin").findOne({
       where: { symbol: "BTC" },
     });
@@ -11,7 +13,9 @@ export default {
         data: { price: newPrice },
       });
 
-      console.log(`[Cron] BTC price updated to: ${newPrice}`);
+      // Теперь вызываем connect вручную или полагаемся на авто-коннект при первом запросе
+      await redis.set(`price:${btc.symbol}`, newPrice.toString(), "EX", 120);
+      console.log(`[Cron + Redis] Цена BTC: ${newPrice}`);
     }
   },
 };
