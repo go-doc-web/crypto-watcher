@@ -446,6 +446,8 @@ export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    direction: Schema.Attribute.Enumeration<['above', 'below']> &
+      Schema.Attribute.DefaultTo<'above'>;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::alert.alert'> &
