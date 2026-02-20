@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Coin } from "@/types";
 
 export default function AlertForm({ coins }: { coins: Coin[] }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   // Sort the list alphabetically by symbol to maintain a consistent order
   const sortedCoins = [...coins].sort((a, b) =>
     a.symbol.localeCompare(b.symbol),
@@ -106,7 +111,7 @@ export default function AlertForm({ coins }: { coins: Coin[] }) {
             type="number"
             value={triggerPrice}
             onChange={(e) => setTriggerPrice(e.target.value)}
-            placeholder={pricePlaceholder}
+            placeholder={mounted ? pricePlaceholder : "loading"}
             className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-emerald-500 text-emerald-400 font-mono"
             required
             step="any"
