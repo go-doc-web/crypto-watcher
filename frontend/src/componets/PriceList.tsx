@@ -1,5 +1,5 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Coin } from "@/types";
 
@@ -13,6 +13,11 @@ const fetcher = (url: string) =>
   }).then((res) => res.json());
 
 export default function PriceList({ initialData }: { initialData: Coin[] }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { data } = useSWR(
     `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/coins`,
     fetcher,
@@ -47,7 +52,9 @@ export default function PriceList({ initialData }: { initialData: Coin[] }) {
               ${Number(coin.price).toLocaleString()}
             </div>
             <div className="text-[10px] text-slate-500 uppercase mt-1 text-opacity-50">
-              {new Date(coin.updatedAt).toLocaleTimeString()}
+              {mounted
+                ? new Date(coin.updatedAt).toLocaleTimeString()
+                : "loading"}
             </div>
           </div>
         </div>
